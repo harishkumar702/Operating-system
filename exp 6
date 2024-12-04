@@ -1,0 +1,60 @@
+#include <stdio.h>
+
+#define MAX 10
+
+typedef struct {
+    int id, bt, at, pr, rt, wt, tat, completed;
+} Process;
+
+void calculateTimes(Process p[], int n) {
+    int time = 0, completed = 0, minPrIndex;
+    while (completed != n) {
+        minPrIndex = -1;
+        for (int i = 0; i < n; i++) {
+            if (p[i].at <= time && !p[i].completed && 
+                (minPrIndex == -1 || p[i].pr < p[minPrIndex].pr)) {
+                minPrIndex = i;
+            }
+        }
+        if (minPrIndex == -1) {
+            time++;
+            continue;
+        }
+        p[minPrIndex].rt--;
+        if (p[minPrIndex].rt == 0) {
+            p[minPrIndex].completed = 1;
+            completed++;
+            p[minPrIndex].tat = time + 1 - p[minPrIndex].at;
+            p[minPrIndex].wt = p[minPrIndex].tat - p[minPrIndex].bt;
+        }
+        time++;
+    }
+}
+
+void displayResults(Process p[], int n) {
+    printf("ID  AT  BT  PR  WT  TAT\n");
+    for (int i = 0; i < n; i++) {
+        printf("%2d  %2d  %2d  %2d  %2d  %3d\n", p[i].id, p[i].at, p[i].bt, p[i].pr, p[i].wt, p[i].tat);
+    }
+}
+
+int main() {
+    Process p[MAX];
+    int n;
+
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    printf("Enter AT, BT, and Priority for each process:\n");
+    for (int i = 0; i < n; i++) {
+        p[i].id = i + 1;
+        scanf("%d%d%d", &p[i].at, &p[i].bt, &p[i].pr);
+        p[i].rt = p[i].bt;
+        p[i].completed = 0;
+    }
+
+    calculateTimes(p, n);
+    displayResults(p, n);
+
+    return 0;
+}
