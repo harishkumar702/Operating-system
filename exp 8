@@ -1,0 +1,44 @@
+#include <stdio.h>
+
+void roundRobin(int n, int bt[], int tq) {
+    int wt[n], tat[n], rt[n], t = 0, remain = n;
+    for (int i = 0; i < n; i++) rt[i] = bt[i];
+
+    printf("Process\tTurnaround Time\tWaiting Time\n");
+    while (remain > 0) {
+        for (int i = 0; i < n; i++) {
+            if (rt[i] > 0) {
+                if (rt[i] <= tq) {
+                    t += rt[i];
+                    rt[i] = 0;
+                    tat[i] = t;
+                    wt[i] = tat[i] - bt[i];
+                    remain--;
+                    printf("P%d\t%d\t\t%d\n", i + 1, tat[i], wt[i]);
+                } else {
+                    t += tq;
+                    rt[i] -= tq;
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    int n, tq;
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    int bt[n];
+    printf("Enter the burst times for each process:\n");
+    for (int i = 0; i < n; i++) {
+        printf("P%d: ", i + 1);
+        scanf("%d", &bt[i]);
+    }
+
+    printf("Enter the time quantum: ");
+    scanf("%d", &tq);
+
+    roundRobin(n, bt, tq);
+    return 0;
+}
