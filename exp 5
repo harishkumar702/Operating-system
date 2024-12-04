@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+#define MAX_PROCESSES 10
+
+typedef struct {
+    int id;
+    int priority;
+} Process;
+
+void select_and_execute(Process processes[], int n) {
+    int highest_priority_index = 0;
+
+    // Find the process with the highest priority
+    for (int i = 1; i < n; i++) {
+        if (processes[i].priority > processes[highest_priority_index].priority) {
+            highest_priority_index = i;
+        }
+    }
+
+    // Execute the selected process
+    printf("Executing Process %d with Priority %d\n", 
+           processes[highest_priority_index].id, 
+           processes[highest_priority_index].priority);
+}
+
+int main() {
+    int n;
+    Process processes[MAX_PROCESSES];
+
+    printf("Enter number of processes (max %d): ", MAX_PROCESSES);
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter Process ID and Priority for Process %d: ", i + 1);
+        scanf("%d %d", &processes[i].id, &processes[i].priority);
+    }
+
+    select_and_execute(processes, n);
+
+    return 0;
+}
