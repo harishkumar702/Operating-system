@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+
+#define NUM_PHILOSOPHERS 5
+
+// Mutex locks for chopsticks
+pthread_mutex_t chopsticks[NUM_PHILOSOPHERS];
+
+// Philosopher function
+void* philosopher(void* arg) {
+    int id = ((int)arg);
+
+    while (1) {
+        printf("Philosopher %d is thinking.\n", id);
+        sleep(1); // Thinking
+
+        // Picking up chopsticks
+        int leftChopstick = id;
+        int rightChopstick = (id + 1) % NUM_PHILOSOPHERS;
+
+        // To prevent deadlock, ensure lower-numbered chopstick is always picked first
+        if (id % 2 == 0) {
+            pthread_mutex_lock(&chopsticks[leftChopstick]);
+            pthread_mutex_lock(&chopsticks[rightChopstick]);
+        } else {
+            pthread_mutex_lock(&chopsticks[rightChopstick]);
+            pthread_mutex_lock(&chopsticks[leftChopstick]);
+        }
+
+        // Eating
+        printf("Philosopher %d is eating.\n", id);
+        sleep(2);
+
+        // Putting down chopsticks
+        pthread_mutex_unlock(&chopsticks[leftChopstick]);
+        pthread_mutex_unlock(&chopsticks[rightChopstick]);
+
+        printf("Philosopher %d has finished eating.\n", id);
+        sleep(1); // Back to thinking
+    }
+    return NULL;
+}
+
+int main() {
+    pthread_t philosophers[NUM_PHILOSOPHERS];
+    int ids[NUM_PHILOSOPHERS];
+
+    // Initialize mutexes for chopsticks
+    for (int i = 0; i < NUM_PHILOSOPHERS; i++) {
+        pthread_mutex_init(&chopsticks[i], NULL);
+    }
+
+    // Create philosopher threads
+    for (int i = 0; i < NUM_PHILOSOPHERS; i++) {
+        ids[i] = i;
+        if (pthread_create(&philosophers[i], NULL, philosopher, &ids[i]) != 0) {
+            perror("Error creating thread");
+            return EXIT_FAILURE;
+        }
+    }
+
+    // Join philosopher threads (infinite loop so will never actually exit)
+    for (int i = 0; i < NUM_PHILOSOPHERS; i++) {
+        pthread_join(philosophers[i], NULL);
+    }
+
+    // Destroy mutexes
+    for (int i = 0; i < NUM_PHILOSOPHERS; i++) {
+        pthread_mutex_destroy(&chopsticks[i]);
+    }
+
+    return 0;
+}
