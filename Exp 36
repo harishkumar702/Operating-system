@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX_BLOCKS 100
+struct DiskBlock {
+    int data;
+    int next;
+};
+struct File {
+    int start_block;
+    int end_block;
+};
+int main() {
+    struct DiskBlock disk[MAX_BLOCKS];
+    struct File file;
+    int total_blocks, i, current_block, next_block;
+    printf("Enter total number of blocks for the file: ");
+    scanf("%d", &total_blocks);
+    printf("Enter data for each block and the pointer to the next block (-1 for end):\n");
+    for (i = 0; i < total_blocks; i++) {
+        printf("Block %d data: ", i);
+        scanf("%d", &disk[i].data);
+        printf("Block %d next pointer: ", i);
+        scanf("%d", &disk[i].next);
+    }
+    printf("Enter start block: ");
+    scanf("%d", &file.start_block);
+    file.end_block = -1;
+    printf("\nAccessing file blocks using linked allocation:\n");
+    current_block = file.start_block;
+    while (current_block != -1) {
+        printf("Block %d -> Data: %d\n", current_block, disk[current_block].data);
+        file.end_block = current_block;
+        current_block = disk[current_block].next;
+    }
+    printf("\nStart Block: %d, End Block: %d\n", file.start_block, file.end_block);
+    printf("File blocks have been accessed successfully.\n");
+    return 0;
+}
