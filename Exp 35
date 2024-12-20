@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_BLOCKS 100
+#define MAX_FILE_SIZE 1000
+
+struct IndexBlock {
+    int block_pointers[MAX_BLOCKS];
+    int total_blocks;
+};
+
+int main() {
+    struct IndexBlock file_index;
+    int file_data[MAX_BLOCKS][MAX_FILE_SIZE];
+    int i, j, block_size, total_blocks;
+
+    printf("Enter total number of blocks for the file: ");
+    scanf("%d", &total_blocks);
+    file_index.total_blocks = total_blocks;
+
+    printf("Enter block size: ");
+    scanf("%d", &block_size);
+
+    for (i = 0; i < total_blocks; i++) {
+        file_index.block_pointers[i] = i;
+        printf("Enter data for block %d (up to %d values):\n", i, block_size);
+        for (j = 0; j < block_size; j++) {
+            scanf("%d", &file_data[i][j]);
+        }
+    }
+
+    printf("\nAccessing file blocks using index block:\n");
+    for (i = 0; i < file_index.total_blocks; i++) {
+        printf("Block %d: ", file_index.block_pointers[i]);
+        for (j = 0; j < block_size; j++) {
+            printf("%d ", file_data[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("\nFile blocks have been accessed successfully.\n");
+    return 0;
+}
