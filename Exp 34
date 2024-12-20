@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_RECORDS 100
+#define MAX_NAME_LEN 50
+
+struct Record {
+    int id;
+    char name[MAX_NAME_LEN];
+};
+
+int main() {
+    struct Record records[MAX_RECORDS];
+    int record_count, i;
+
+    printf("Enter number of records: ");
+    scanf("%d", &record_count);
+
+    for (i = 0; i < record_count; i++) {
+        printf("Enter ID and Name for record %d: ", i + 1);
+        scanf("%d %s", &records[i].id, records[i].name);
+    }
+
+    printf("\nAccessing records sequentially:\n");
+    for (i = 0; i < record_count; i++) {
+        printf("Record %d -> ID: %d, Name: %s\n", i + 1, records[i].id, records[i].name);
+    }
+
+    printf("\nAll records have been accessed sequentially.\n");
+    return 0;
+}
