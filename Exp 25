@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+
+int main() {
+    int fd;
+    char buffer[100];
+    struct stat fileStat;
+    DIR *dir;
+    struct dirent *entry;
+
+    fd = open("example.txt", O_CREAT | O_WRONLY, 0644);
+    write(fd, "Hello, UNIX system calls!", 25);
+    close(fd);
+
+    fd = open("example.txt", O_RDONLY);
+    lseek(fd, 7, SEEK_SET);
+    read(fd, buffer, 18);
+    buffer[18] = '\0';
+    printf("Data after seek: %s\n", buffer);
+    close(fd);
+
+    if (stat("example.txt", &fileStat) == 0) {
+        printf("File Size: %ld bytes\n", fileStat.st_size);
+        printf("File Permissions: %o\n", fileStat.st_mode & 0777);
+    }
+
+    fd = open("example.txt", O_RDONLY);
+    int flags = fcntl(fd, F_GETFL);
+    if (flags & O_RDONLY) printf("File is read-only\n");
+    close(fd);
+
+    dir = opendir(".");
+    if (dir != NULL) {
+        printf("Directory contents:\n");
+        while ((entry = readdir(dir)) != NULL) {
+            printf("%s\n", entry->d_name);
+        }
+        closedir(dir);
+    }
+
+    return 0;
+}
