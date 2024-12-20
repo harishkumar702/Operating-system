@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+
+void *thread_function(void *arg) {
+    int num = *((int *)arg);
+    printf("Thread %d is running\n", num);
+    sleep(1);  // Simulate work
+    printf("Thread %d is exiting\n", num);
+    free(arg);
+    pthread_exit(NULL);
+}
+
+int main() {
+    pthread_t thread1, thread2;
+    int *num1 = malloc(sizeof(int));
+    int *num2 = malloc(sizeof(int));
+
+    *num1 = 1;
+    *num2 = 2;
+
+    printf("\n--- Creating Threads ---\n");
+
+    if (pthread_create(&thread1, NULL, thread_function, num1) == 0) {
+        printf("Thread 1 created successfully\n");
+    }
+
+    if (pthread_create(&thread2, NULL, thread_function, num2) == 0) {
+        printf("Thread 2 created successfully\n");
+    }
+
+    printf("\n--- Joining Threads ---\n");
+    pthread_join(thread1, NULL);
+    printf("Thread 1 joined\n");
+
+    pthread_join(thread2, NULL);
+    printf("Thread 2 joined\n");
+
+    printf("\n--- Checking Thread Equality ---\n");
+
+    if (pthread_equal(thread1, thread2)) {
+        printf("Thread1 and Thread2 are equal.\n");
+    } else {
+        printf("Thread1 and Thread2 are not equal.\n");
+    }
+
+    printf("\n--- Exiting Main Program ---\n");
+
+    pthread_exit(NULL);
+
+    return 0;
+}
