@@ -1,0 +1,80 @@
+#include <stdio.h>
+
+#define MAX_FRAMES 10
+#define MAX_PAGES 100
+
+int findOptimal(int pages[], int frames[], int page_count, int frame_count, int current_index) {
+    int i, j, farthest = current_index, pos = -1;
+    int found[MAX_FRAMES] = {0};
+
+    for (i = 0; i < frame_count; i++) {
+        for (j = current_index + 1; j < page_count; j++) {
+            if (frames[i] == pages[j]) {
+                found[i] = 1;
+                if (j > farthest) {
+                    farthest = j;
+                    pos = i;
+                }
+                break;
+            }
+        }
+        if (!found[i]) {
+            return i;
+        }
+    }
+    return (pos == -1) ? 0 : pos;
+}
+
+int main() {
+    int pages[MAX_PAGES], frames[MAX_FRAMES];
+    int page_count, frame_count, page_faults = 0;
+    int i, j, pos, flag;
+
+    printf("Enter number of pages: ");
+    scanf("%d", &page_count);
+
+    printf("Enter page references: ");
+    for (i = 0; i < page_count; i++) {
+        scanf("%d", &pages[i]);
+    }
+
+    printf("Enter number of frames: ");
+    scanf("%d", &frame_count);
+
+    for (i = 0; i < frame_count; i++) {
+        frames[i] = -1;
+    }
+
+    for (i = 0; i < page_count; i++) {
+        flag = 0;
+
+        for (j = 0; j < frame_count; j++) {
+            if (frames[j] == pages[i]) {
+                flag = 1;
+                break;
+            }
+        }
+
+        if (!flag) {
+            if (i < frame_count) {
+                frames[i] = pages[i];
+            } else {
+                pos = findOptimal(pages, frames, page_count, frame_count, i);
+                frames[pos] = pages[i];
+            }
+            page_faults++;
+        }
+
+        printf("Frames: ");
+        for (j = 0; j < frame_count; j++) {
+            if (frames[j] != -1)
+                printf("%d ", frames[j]);
+            else
+                printf("- ");
+        }
+        printf("\n");
+    }
+
+    printf("Total Page Faults: %d\n", page_faults);
+    return 0;
+}
