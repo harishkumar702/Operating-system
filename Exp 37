@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX_REQUESTS 100
+int main() {
+    int requests[MAX_REQUESTS], n, head, i;
+    int total_movement = 0;
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &n);
+    printf("Enter the disk requests: ");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &requests[i]);
+    }
+    printf("Enter the initial position of the disk head: ");
+    scanf("%d", &head);
+    printf("\nDisk head movement sequence:\n");
+    for (i = 0; i < n; i++) {
+        printf("Move from %d to %d\n", head, requests[i]);
+        total_movement += abs(requests[i] - head);
+        head = requests[i];
+    }
+    printf("\nTotal head movement: %d cylinders\n", total_movement);
+    return 0;
+}
